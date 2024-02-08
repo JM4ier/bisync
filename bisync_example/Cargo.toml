@@ -1,0 +1,12 @@
+[package]
+name = "bisync_example"
+version = "0.2.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bisync = { path = "../bisync" }
+reqwest = { version = "0.11" }
+tokio = { version = "1.36.0", features = ["full"] }
+ureq = "2.9.4"

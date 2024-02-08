@@ -1,0 +1,12 @@
+[package]
+name = "bisync_macros"
+description = "macro implementations for the bisync crate"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/JM4ier/bisync"
+version = "0.2.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
