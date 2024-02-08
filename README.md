@@ -13,18 +13,18 @@ You need a tiny bit of boilerplate in the parent module but that's all there is 
 ## Example
 ```rs
 // lib.rs
- 
+
 #[path = "."]
 pub mod asynchronous {
-    ::bisync::async_defs!();
+    use bisync::asynchronous::*;
     mod inner;
     pub use inner::*;
 }
- 
+
 // here you could also add `#[cfg]` attributes to enable or disable this module
 #[path = "."]
 pub mod blocking {
-    ::bisync::sync_defs!();
+    use bisync::synchronous::*;
     mod inner;
     pub use inner::*;
 }
@@ -32,15 +32,15 @@ pub mod blocking {
 
 ```rs
 // inner.rs
- 
+
 // these are all the generated definitions:
-use super::{bisync, only_sync, only_async, SYNC, ASYNC}; 
-  
+use super::{bisync, only_sync, only_async, SYNC, ASYNC};
+ 
 #[bisync]
 pub async fn foo() -> String {
     bar().await
 }
-  
+ 
 #[bisync]
 async fn bar() -> String {
     if ASYNC {
@@ -50,10 +50,10 @@ async fn bar() -> String {
     } else {
         panic!("This is neither async nor blocking code but a secret third thing.");
     }
-  
+ 
     baz().await
 }
-  
+ 
 #[only_sync]
 fn baz() -> String {
     ureq::get("https://example.com")
@@ -62,7 +62,7 @@ fn baz() -> String {
         .into_string()
         .unwrap()
 }
-  
+ 
 #[only_async]
 async fn baz() -> String {
     reqwest::get("https://example.com")
