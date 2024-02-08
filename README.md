@@ -33,7 +33,7 @@ pub mod blocking {
 ```rs
 // inner.rs
 
-// these are all the generated definitions:
+// these are all the available definitions:
 use super::{bisync, only_sync, only_async, SYNC, ASYNC};
  
 #[bisync]

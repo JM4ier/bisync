@@ -1,4 +1,4 @@
-use super::{bisync, only_sync, only_async, SYNC, ASYNC}; // all the generated definitions
+use super::{bisync, only_sync, only_async, SYNC, ASYNC}; // all the available definitions
  
 #[bisync]
 pub async fn foo() -> String {
