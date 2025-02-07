@@ -2,7 +2,7 @@
 name = "bisync"
 description = "write async-generic code"
 license = "MIT OR Apache-2.0"
-version = "0.2.3"
+version = "0.3.0"
 edition = "2021"
 repository = "https://github.com/JM4ier/bisync"
 
