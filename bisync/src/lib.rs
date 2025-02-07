@@ -72,6 +72,7 @@
 //! As you can see, we prevent duplicate definitions of `foo` and `bar` because they get generated twice,
 //! once in synchronous form, and once in asynchronous form.
 //!
+#![no_std]
 
 /// The definitions to use for the synchronous code variation
 pub mod synchronous {
@@ -89,10 +90,10 @@ pub mod synchronous {
 
 /// The definitions to use for the asynchronous code variation
 pub mod asynchronous {
-    /// Specialize an item to only be emitted in the asynchronous module
-    pub use ::bisync_macros::internal_noop as only_async;
     /// Specialize an item to only be emitted in the synchronous module
     pub use ::bisync_macros::internal_delete as only_sync;
+    /// Specialize an item to only be emitted in the asynchronous module
+    pub use ::bisync_macros::internal_noop as only_async;
     /// Emit an item in both synchronous and asynchronous code, and adjust asynchronisity depending on location
     pub use ::bisync_macros::internal_noop as bisync;
     /// true in the synchronous module, otherwise false
@@ -100,3 +101,4 @@ pub mod asynchronous {
     /// true in the asynchronous module, otherwise false
     pub const ASYNC: bool = true;
 }
+
