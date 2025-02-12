@@ -17,6 +17,7 @@
 //! #[path = "."]
 //! pub mod blocking {
 //!     use bisync::synchronous::*;
+//!     #[allow(clippy::duplicate_mod)]
 //!     mod inner;
 //!     pub use inner::*;
 //! }

@@ -8,6 +8,7 @@ pub mod blocking {
 #[path = "."]
 pub mod asynchronous {
     use bisync::asynchronous::*;
+    #[allow(clippy::duplicate_mod)]
     mod inner;
     pub use inner::*;
 }
