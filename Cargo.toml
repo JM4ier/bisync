@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "bisync",
+    "bisync_example",
+    "bisync_macros",
+]
