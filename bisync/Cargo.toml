@@ -9,4 +9,4 @@ repository = "https://github.com/JM4ier/bisync"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bisync_macros = "0.2.3"
+bisync_macros = { path = "../bisync_macros" }

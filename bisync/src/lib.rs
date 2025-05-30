@@ -94,11 +94,13 @@ pub mod asynchronous {
     pub use ::bisync_macros::internal_delete as only_sync;
     /// Specialize an item to only be emitted in the asynchronous module
     pub use ::bisync_macros::internal_noop as only_async;
-    /// Emit an item in both synchronous and asynchronous code, and adjust asynchronisity depending on location
-    pub use ::bisync_macros::internal_noop as bisync;
+    /// Emit an item in both synchronous and asynchronous code.
+    /// If an `async_suffix = "some_suffix"` attribute is provided *to this macro*,
+    /// it transforms `method().await` to `method_some_suffix().await`.
+    /// Otherwise (no `async_suffix` or empty `async_suffix`), it acts like a no-op for the async code structure.
+    pub use ::bisync_macros::internal_transform_async as bisync;
     /// true in the synchronous module, otherwise false
     pub const SYNC: bool = false;
     /// true in the asynchronous module, otherwise false
     pub const ASYNC: bool = true;
 }
-
