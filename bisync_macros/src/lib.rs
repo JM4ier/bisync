@@ -1,6 +1,8 @@
 //! Do not use this crate directly.
 
 use proc_macro::{Group, TokenStream};
+use quote::quote;
+use syn::{parse_macro_input, visit_mut::VisitMut, Expr, ItemFn};
 
 #[proc_macro_attribute]
 pub fn internal_noop(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -54,4 +56,46 @@ pub fn internal_strip_async(attr: TokenStream, item: TokenStream) -> TokenStream
     }
 
     new.into_iter().collect()
+}
+
+struct MethodTransformer {
+    suffix: String,
+}
+
+impl VisitMut for MethodTransformer {
+    fn visit_expr_mut(&mut self, expr: &mut Expr) {
+        if let Expr::Await(await_expr) = expr {
+            if let Expr::MethodCall(method_call) = &mut *await_expr.base {
+                let new_method_name = format!("{}_{}", method_call.method, self.suffix);
+                method_call.method = syn::Ident::new(&new_method_name, method_call.method.span());
+            }
+        }
+        syn::visit_mut::visit_expr_mut(self, expr);
+    }
+}
+
+#[proc_macro_attribute]
+pub fn internal_transform_async(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let mut input = parse_macro_input!(item as ItemFn);
+    let attr_str = attr.to_string();
+    let suffix = if attr_str.contains("async_suffix") {
+        let parts: Vec<&str> = attr_str.split('=').map(|s| s.trim()).collect();
+        if parts.len() == 2 {
+            parts[1].trim_matches('"').to_string()
+        } else {
+            "".to_string()
+        }
+    } else {
+        "".to_string()
+    };
+
+    if !suffix.is_empty() {
+        let mut transformer = MethodTransformer { suffix };
+        transformer.visit_item_fn_mut(&mut input);
+    }
+
+    let output = quote! {
+        #input
+    };
+    output.into()
 }
