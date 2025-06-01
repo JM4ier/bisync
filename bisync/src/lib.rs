@@ -9,6 +9,8 @@
 //! #[path = "."]
 //! pub mod asynchronous {
 //!     use bisync::asynchronous::*;
+//!     // If you use the `suffix!` macro, it needs to be in scope:
+//!     // use bisync::suffix;
 //!     mod inner;
 //!     pub use inner::*;
 //! }
@@ -17,6 +19,8 @@
 //! #[path = "."]
 //! pub mod blocking {
 //!     use bisync::synchronous::*;
+//!     // If you use the `suffix!` macro, it needs to be in scope:
+//!     // use bisync::suffix;
 //!     mod inner;
 //!     pub use inner::*;
 //! }
@@ -28,7 +32,7 @@
 //! // inner.rs
 //!
 //! // these are all the available definitions:
-//! use super::{bisync, only_sync, only_async, SYNC, ASYNC};
+//! use super::{bisync, only_sync, only_async, SYNC, ASYNC, suffix};
 //!  
 //! #[bisync]
 //! pub async fn foo() -> String {
@@ -46,8 +50,23 @@
 //!     }
 //!  
 //!     baz().await
+//!
+//!     // Example usage of the suffix macro assuming http_get is the base method
+//!     // and your crate has "async" and "blocking" features.
+//!     // The suffix macro uses these features for conditional compilation.
+//!     let _response = suffix!("_async", http_get("https://example.com").await.unwrap());
+//!     // This would expand to:
+//!     // #[cfg(feature = "async")] { http_get_async("https://example.com").await.unwrap() }
+//!     // #[cfg(all(feature = "blocking", not(feature = "async")))] { http_get("https://example.com").await.unwrap() }
+//!     // Then #[bisync]'s internal_strip_async would remove .await for the blocking path.
 //! }
-//!  
+//!
+//!
+//!
+//! // Dummy function for example
+//! async fn http_get(_url: &str) -> Result<String, ()> { Ok("dummy sync".to_string()) }
+//! async fn http_get_async(_url: &str) -> Result<String, ()> { Ok("dummy async".to_string()) }
+//!
 //! #[only_sync]
 //! fn baz() -> String {
 //!     ureq::get("https://example.com")
@@ -72,6 +91,20 @@
 //! As you can see, we prevent duplicate definitions of `foo` and `bar` because they get generated twice,
 //! once in synchronous form, and once in asynchronous form.
 //!
+//! The `suffix!` macro allows conditional compilation of method calls based on features of the *crate using bisync*,
+//! typically "async" and "blocking". It suffixes the method call immediately preceding an `.await`.
+//!
+//! **Using `suffix!` Macro:**
+//!
+//! The `suffix!` macro expects the *user's crate* to have features like "async" and "blocking" defined.
+//! It's called like this: `suffix!("_async", expression_containing_method().await)`.
+//!
+//! - If `feature = "async"` is enabled: `expression_containing_method_async().await`
+//! - If `feature = "blocking"` (and not "async") is enabled: `expression_containing_method().await`
+//!
+//! The `#[bisync]` attribute will then further process this: `internal_strip_async` will remove the `.await`
+//! from the blocking path.
+
 #![no_std]
 
 /// The definitions to use for the synchronous code variation
@@ -102,3 +135,5 @@ pub mod asynchronous {
     pub const ASYNC: bool = true;
 }
 
+// Re-export the `suffix` procedural macro so users can call `bisync::suffix!`
+pub use ::bisync_macros::suffix;
