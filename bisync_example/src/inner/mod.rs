@@ -1,10 +1,13 @@
-use super::{bisync, only_sync, only_async, SYNC, ASYNC}; // all the available definitions
- 
+use super::crate_root::*;
+
+pub mod a;
+pub mod b;
+
 #[bisync]
 pub async fn foo() -> String {
     bar().await
 }
- 
+
 #[bisync]
 async fn bar() -> String {
     if ASYNC {
@@ -14,10 +17,10 @@ async fn bar() -> String {
     } else {
         panic!("This is neither async nor blocking code but a secret third thing.");
     }
- 
+
     baz().await
 }
- 
+
 #[only_sync]
 fn baz() -> String {
     ureq::get("https://example.com")
@@ -26,7 +29,7 @@ fn baz() -> String {
         .into_string()
         .unwrap()
 }
- 
+
 #[only_async]
 async fn baz() -> String {
     reqwest::get("https://example.com")
