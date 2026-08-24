@@ -1,5 +1,11 @@
 # bisync
 
+> ⚠️ **Notice: This crate has been yanked and deprecated**
+>
+> **Why was this done?**
+> The author does not wish to be a software supply chain risk for a single, tiny utility.
+> Due to the basic nature of this crate, it requires extremely infrequent updating and maintenance and all of its code can be copy-pasted (vendored in) without issue.
+
 Easily write synchronous and asynchronous code at the same time.
 
 This crate is inspired by [maybe-async](https://github.com/fMeow/maybe-async-rs), but uses a different approach and tries to be more minimalistic.
